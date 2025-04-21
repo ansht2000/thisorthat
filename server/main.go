@@ -43,6 +43,7 @@ func main() {
 	router.GET("/lists/:id", apiCfg.handlerGetListByID)
 	router.GET("/characters/:id", apiCfg.handlerGetCharacterByID)
 	router.GET("/characters/list/:id", apiCfg.handlerGetCharactersByListID)
+	router.GET("/characters/random/:id", apiCfg.handlerGetTwoRandomCharactersByListID)
 
 	router.Run("localhost:" + port)
 }

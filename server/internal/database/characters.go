@@ -133,3 +133,40 @@ func (c *Client) GetCharactersByListID(ctx context.Context, listID uuid.UUID) ([
 
 	return characters, nil
 }
+
+func (c *Client) GetTwoRandomCharactersFromListID(ctx context.Context, listID uuid.UUID) ([]Character, error) {
+	query, err := c.db.Prepare(`
+		SELECT * FROM characters
+		WHERE list_id = ?
+		ORDER BY RANDOM()
+		LIMIT 2;
+	`)
+	if err != nil {
+		return nil, err
+	}
+	defer query.Close()
+	rows, err := query.QueryContext(ctx, listID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	characters := []Character{}
+	for rows.Next() {
+		var character Character
+		if err := rows.Scan(
+			&character.ID,
+			&character.Name,
+			&character.PictureURL,
+			&character.Elo,
+			&character.CreatedAt,
+			&character.UpdatedAt,
+			&character.ListID,
+		); err != nil {
+			return nil, err
+		}
+		characters = append(characters, character)
+	}
+
+	return characters, nil
+}

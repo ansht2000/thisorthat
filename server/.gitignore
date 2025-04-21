@@ -1,3 +1,5 @@
 .env
 assets/
+scripts/
 thisorthat.db
+todos.txt
