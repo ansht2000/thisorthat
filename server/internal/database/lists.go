@@ -10,8 +10,8 @@ import (
 )
 
 type List struct {
-	ID uuid.UUID `json:"id"`
-	Name string `json:"name"`
+	ID        uuid.UUID `json:"id"`
+	Name      string    `json:"name"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
@@ -100,7 +100,7 @@ func (c *Client) GetListByID(ctx context.Context, id uuid.UUID) (List, error) {
 		return List{}, err
 	}
 	defer query.Close()
-	
+
 	var list List
 	if err = query.QueryRowContext(ctx, id).Scan(
 		&list.ID,

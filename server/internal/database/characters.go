@@ -9,19 +9,19 @@ import (
 )
 
 type Character struct {
-	ID uuid.UUID `json:"id"`
-	Name string `json:"name"`
-	PictureURL string `json:"picture_url"`
-	Elo int `json:"elo"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-	ListID string `json:"list_id"`
+	ID         uuid.UUID `json:"id"`
+	Name       string    `json:"name"`
+	PictureURL string    `json:"picture_url"`
+	Elo        int       `json:"elo"`
+	CreatedAt  time.Time `json:"created_at"`
+	UpdatedAt  time.Time `json:"updated_at"`
+	ListID     string    `json:"list_id"`
 }
 
 type CreateCharacterParams struct {
-	Name string `json:"name"`
-	PictureURL string `json:"picture_url"`
-	ListID uuid.UUID `json:"list_id"`
+	Name       string    `json:"name"`
+	PictureURL string    `json:"picture_url"`
+	ListID     uuid.UUID `json:"list_id"`
 }
 
 func (c *Client) CreateCharacter(ctx context.Context, params CreateCharacterParams) (Character, error) {
@@ -169,4 +169,37 @@ func (c *Client) GetTwoRandomCharactersFromListID(ctx context.Context, listID uu
 	}
 
 	return characters, nil
+}
+
+func (c *Client) GetELOByCharacterID(ctx context.Context, id uuid.UUID) (int, error) {
+	query, err := c.db.Prepare(`
+		SELECT elo FROM characters
+		WHERE id = ?;
+	`)
+	if err != nil {
+		return -1, err
+	}
+	defer query.Close()
+
+	var elo int
+	if err = query.QueryRowContext(ctx, id).Scan(&elo); err != nil {
+		return -1, err
+	}
+
+	return elo, nil
+}
+
+func (c *Client) UpdateCharactersELOByID(ctx context.Context, id uuid.UUID, newELO int) error {
+	query, err := c.db.Prepare(`
+		UPDATE characters
+		SET elo = ?
+		WHERE id = ?;
+	`)
+	if err != nil {
+		return err
+	}
+	defer query.Close()
+
+	_, err = query.ExecContext(ctx, newELO, id)
+	return err
 }

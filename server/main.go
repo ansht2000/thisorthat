@@ -38,6 +38,7 @@ func main() {
 	router.POST("/lists", apiCfg.handlerCreateList)
 	router.POST("/reset", apiCfg.handlerReset)
 	router.POST("/characters", apiCfg.handlerCreateCharacter)
+	router.POST("/characters/elo", apiCfg.handlerUpdateWinnerAndLoserELOs)
 
 	router.GET("/lists", apiCfg.handlerGetLists)
 	router.GET("/lists/:id", apiCfg.handlerGetListByID)
