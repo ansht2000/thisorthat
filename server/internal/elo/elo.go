@@ -1,7 +1,6 @@
 package elo
 
 import (
-	"fmt"
 	"math"
 
 	"github.com/ansht2000/thisorthat/internal/utils"
