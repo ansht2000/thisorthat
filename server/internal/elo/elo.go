@@ -23,11 +23,8 @@ func newRating(oldElo int, outcomeProb float64, isWinner bool) float64 {
 }
 
 func CalculateELO(winnerELO int, loserELO int) (int, int) {
-	fmt.Println(winnerELO, loserELO)
 	outcomeProb := probability(loserELO, winnerELO)
-	fmt.Println(outcomeProb)
 	newWinnerElo := newRating(winnerELO, 1 - outcomeProb, true)
 	newLoserELO := newRating(loserELO, outcomeProb, false)
-	fmt.Println(newWinnerElo, newLoserELO)
 	return int(newWinnerElo), int(newLoserELO)
 }
