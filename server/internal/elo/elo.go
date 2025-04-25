@@ -12,7 +12,6 @@ var kFactor = 30.0
 
 func probability(ratingOne int, ratingTwo int) float64 {
 	return 1.0 / (1.0 + math.Pow(10, ((float64(ratingTwo - ratingOne) / 400))))
-
 }
 
 func newRating(oldElo int, outcomeProb float64, isWinner bool) float64 {
@@ -23,6 +22,9 @@ func newRating(oldElo int, outcomeProb float64, isWinner bool) float64 {
 
 func CalculateELO(winnerELO int, loserELO int) (int, int) {
 	outcomeProb := probability(loserELO, winnerELO)
+	// i absolutely don't neeed to pass bool values
+	// i could pass a 1 and 0 instead and it would be faster
+	// but i want to use the fastbooltoint i found :3
 	newWinnerElo := newRating(winnerELO, 1 - outcomeProb, true)
 	newLoserELO := newRating(loserELO, outcomeProb, false)
 	return int(newWinnerElo), int(newLoserELO)

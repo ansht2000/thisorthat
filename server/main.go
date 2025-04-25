@@ -34,11 +34,21 @@ func main() {
 		// if not specified default port is 8080
 		port = "8080"
 	}
+	// using default router with logging and recovery middleware attached
 	router := gin.Default()
-	router.POST("/lists", apiCfg.handlerCreateList)
-	router.POST("/reset", apiCfg.handlerReset)
-	router.POST("/characters", apiCfg.handlerCreateCharacter)
-	router.POST("/characters/elo", apiCfg.handlerUpdateWinnerAndLoserELOs)
+
+	// currently making a group for the post endpoints so they cant be used in prod
+	// will probably change later when a strategy to properly accept user created
+	// lists and characters is implemented
+	// TODO: figure out how to properly get well formatted lists from users
+	devOnly := router.Group("/")
+	devOnly.Use(devModeMiddleware())
+	{
+		devOnly.POST("/lists", apiCfg.handlerCreateList)
+		devOnly.POST("/reset", apiCfg.handlerReset)
+		devOnly.POST("/characters", apiCfg.handlerCreateCharacter)
+		devOnly.POST("/characters/elo", apiCfg.handlerUpdateWinnerAndLoserELOs)
+	}
 
 	router.GET("/lists", apiCfg.handlerGetLists)
 	router.GET("/lists/:id", apiCfg.handlerGetListByID)
