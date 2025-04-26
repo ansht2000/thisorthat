@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -21,13 +20,6 @@ func devModeMiddleware() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		c.Next()
-	}
-}
-
-func testMiddleware() gin.HandlerFunc {
-	fmt.Println("test")
-	return func(c *gin.Context) {
 		c.Next()
 	}
 }

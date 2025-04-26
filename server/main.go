@@ -50,6 +50,7 @@ func main() {
 		devOnly.POST("/characters/elo", apiCfg.handlerUpdateWinnerAndLoserELOs)
 	}
 
+	router.GET("/healthz", apiCfg.handlerReadiness)
 	router.GET("/lists", apiCfg.handlerGetLists)
 	router.GET("/lists/:id", apiCfg.handlerGetListByID)
 	router.GET("/characters/:id", apiCfg.handlerGetCharacterByID)
