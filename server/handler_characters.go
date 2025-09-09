@@ -63,25 +63,6 @@ func (cfg *apiConfig) handlerGetCharactersByListID(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, characters)
 }
 
-func (cfg *apiConfig) handlerGetTwoRandomCharactersByListID(c *gin.Context) {
-	id := c.Param("id")
-	uuid, err := uuid.Parse(id)
-	if err != nil {
-		c.IndentedJSON(http.StatusBadRequest, returnErrJSON("invalid id provided"))
-		return
-	}
-	characters, err := cfg.db.GetTwoRandomCharactersFromListID(c, uuid)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			c.IndentedJSON(http.StatusNotFound, []database.Character{})
-			return
-		}
-		c.IndentedJSON(http.StatusInternalServerError, returnErrJSON(err.Error()))
-		return
-	}
-	c.IndentedJSON(http.StatusOK, characters)
-}
-
 func (cfg *apiConfig) handlerUpdateWinnerAndLoserELOs(c *gin.Context) {
 	var updateWinnerAndLoserParams updateWinnerAndLoserParams
 	if err := c.BindJSON(&updateWinnerAndLoserParams); err != nil {

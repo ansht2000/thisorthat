@@ -91,29 +91,6 @@ func (c *Client) GetLists(ctx context.Context) ([]List, error) {
 	return lists, nil
 }
 
-func (c *Client) GetListByID(ctx context.Context, id uuid.UUID) (List, error) {
-	query, err := c.db.Prepare(`
-		SELECT * FROM lists
-		WHERE id = ?;
-	`)
-	if err != nil {
-		return List{}, err
-	}
-	defer query.Close()
-
-	var list List
-	if err = query.QueryRowContext(ctx, id).Scan(
-		&list.ID,
-		&list.Name,
-		&list.CreatedAt,
-		&list.UpdatedAt,
-	); err != nil {
-		return List{}, err
-	}
-
-	return list, nil
-}
-
 func (c *Client) DeleteLists() error {
 	query, err := c.db.Prepare(`
 		DELETE FROM lists;

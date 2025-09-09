@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/ansht2000/thisorthat/internal/database"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -36,6 +37,7 @@ func main() {
 	}
 	// using default router with logging and recovery middleware attached
 	router := gin.Default()
+	router.Use(cors.Default())
 
 	// currently making a group for the post endpoints so they cant be used in prod
 	// will probably change later when a strategy to properly accept user created
@@ -47,15 +49,16 @@ func main() {
 		devOnly.POST("/lists", apiCfg.handlerCreateList)
 		devOnly.POST("/reset", apiCfg.handlerReset)
 		devOnly.POST("/characters", apiCfg.handlerCreateCharacter)
-		devOnly.POST("/characters/elo", apiCfg.handlerUpdateWinnerAndLoserELOs)
 	}
 
 	router.GET("/healthz", apiCfg.handlerReadiness)
 	router.GET("/lists", apiCfg.handlerGetLists)
-	router.GET("/lists/:id", apiCfg.handlerGetListByID)
+	router.GET("/lists/random")
+	router.GET("/lists/:id/characters", apiCfg.handlerGetCharactersByListID)
 	router.GET("/characters/:id", apiCfg.handlerGetCharacterByID)
-	router.GET("/characters/list/:id", apiCfg.handlerGetCharactersByListID)
-	router.GET("/characters/random/:id", apiCfg.handlerGetTwoRandomCharactersByListID)
 
-	router.Run("localhost:" + port)
+	// TODO: add authentication so only the frontend can call this
+	router.POST("/characters/elo", apiCfg.handlerUpdateWinnerAndLoserELOs)
+
+	router.Run(":" + port)
 }
