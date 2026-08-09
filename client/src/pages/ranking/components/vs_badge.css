@@ -1,0 +1,18 @@
+.vsBadge {
+    border-radius: 100%;
+    background: radial-gradient(circle, #1a1a2e 0%, #0a0a0f 40%);
+    border: 2px solid rgba(255,255,255,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    z-index: 10;
+    box-shadow: 0 0 30px rgba(0,0,0,0.8);
+    padding: 30px;
+}
+
+.vsText {
+    font-weight: 600;
+    letterSpacing: 2;
+    color: rgba(255,255,255,0.7);
+}

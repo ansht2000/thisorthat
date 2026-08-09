@@ -1,0 +1,71 @@
+.page {
+    min-height: 100vh;
+    background: #0a0a0f;
+    color: #e8e8e8;
+    overflow: hidden;
+}
+
+.main {
+    max-width: 60%;
+    margin: 0 auto;
+    padding: 40px 24px 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.title {
+    font-size: 48px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin: 0;
+    background: linear-gradient(90deg, #ff3c3c, #fff 50%, #3c8cff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+    font-size: 16px;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 6px;
+}
+
+.arena {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 100px;
+    width: 100%;
+}
+
+.flashOverlay {
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    pointer-events: none;
+    z-index: 5;
+    animation: fadeOut 0.2s ease-out forwards;
+}
+
+.flashOverlayLeftGrad {
+    background: radial-gradient(circle at center, rgba(255,60,60,1), transparent 10%);
+}
+
+.flashOverlayRightGrad {
+    background: radial-gradient(circle at center, rgba(60,130,255,1), transparent 10%);
+}
+
+.hint {
+    margin-top: 32px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.2);
+},
