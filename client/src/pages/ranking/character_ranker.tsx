@@ -1,5 +1,4 @@
 import { useState } from "react";
-import type { FranchisesType } from "../../types/franchise";
 import type { Character } from "../../types/character";
 
 import "./character_ranker.css"
@@ -10,48 +9,19 @@ import VSBadge from "./components/vs_badge";
 import { useQueryFranchises } from "../../hooks/use-query-franchises";
 
 function CharacterRanker() {
-    const FRANCHISES: FranchisesType = {
-        "invincible": {
-            name: "Invincible",
-            id: "1",
-            characters: [
-                { id: "1", name: "Invincible", picture_url: "https://i.imgur.com/8QlLfmj.png", list_id: "1", elo: 1200 },
-                { id: "2", name: "Omni-Man", picture_url: "https://i.imgur.com/YFKoaAk.png", list_id: "1", elo: 1200 },
-                { id: "3", name: "Rex Splode", picture_url: "", list_id: "1", elo: 1200 },
-                { id: "4", name: "Atom Eve", picture_url: "", list_id: "1", elo: 1200 },
-            ],
-        },
-        "mha": {
-            name: "My Hero Academia",
-            id: "2",
-            characters: [
-                { id: "10", name: "Deku", picture_url: "", list_id: "1", elo: 1200 },
-                { id: "11", name: "Dynamight", picture_url: "", list_id: "1", elo: 1200 },
-                { id: "12", name: "Shoto", picture_url: "", list_id: "1, elo: 1200", elo: 1200 },
-                { id: "13", name: "All Might", picture_url: "", list_id: "1", elo: 1200 },
-            ],
-        },
-        "onepiece": {
-            name: "One Piece",
-            id: "3",
-            characters: [
-                { id: "20", name: "Monkey D. Luffy", picture_url: "", list_id: "1", elo: 1200 },
-                { id: "21", name: "Roronoa Zoro", picture_url: "", list_id: "1", elo: 1200 },
-                { id: '22', name: "Sanji", picture_url: "", list_id: "1", elo: 1200 },
-                { id: "23", name: "Nico Robin", picture_url: "", list_id: "1", elo: 1200 },
-            ],
-        },
-    };
+    const franchises = useQueryFranchises();
 
     const [franchise, setFranchise] = useState<string>("invincible");
     const [pair, setPair] = useState<number[]>([0, 1]);
     const [flash, setFlash] = useState<string | null>(null);
 
-    const chars = FRANCHISES[franchise].characters;
+    const activeFranchise = franchise ?? Object.keys(franchises)[0];
+    const chars = franchises[activeFranchise]?.characters ?? [];
     const left = chars[pair[0]];
     const right = chars[pair[1]];
 
     function handlePick(picked: Character) {
+        if (chars.length < 2) return;
         const side = picked.id === left.id ? "left" : "right";
         setFlash(side);
 
@@ -76,8 +46,6 @@ function CharacterRanker() {
         setFlash(null);
     }
 
-    useQueryFranchises();
-
     return (
         <div className="page">
             <Navbar active="/"/>
@@ -99,9 +67,13 @@ function CharacterRanker() {
                             `}
                         />
                     )}
-                    <CharacterCard character={left} side="left" onPick={handlePick}/>
-                    <VSBadge/>
-                    <CharacterCard character={right} side="right" onPick={handlePick}/>
+                    {left && right && (
+                        <>
+                            <CharacterCard character={left} side="left" onPick={handlePick} />
+                            <VSBadge />
+                            <CharacterCard character={right} side="right" onPick={handlePick} />
+                        </>
+                    )}
                 </div>
                 <p className="hint">Click on a character to choose them as the winner</p>
             </main>

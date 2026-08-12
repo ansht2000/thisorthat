@@ -1,10 +1,10 @@
 import { API_URL } from "../env";
 import { type FranchisesType, type FranchiseType } from "../types/franchise";
-import { setFranchises } from "../lib/store";
 
-export async function fetchFranchises() {
+export async function fetchFranchises(): Promise<FranchisesType> {
     const response = await fetch(`${API_URL}/lists`);
     if (!response.ok) {
+        console.log(response);
         throw new Error("error fetching");
     }
 
@@ -14,5 +14,5 @@ export async function fetchFranchises() {
     for (let franchise of franchises) {
         franchises_map[franchise.name] = franchise;
     }
-    setFranchises(franchises_map);
+    return franchises_map;
 }
