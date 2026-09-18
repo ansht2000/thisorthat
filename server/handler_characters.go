@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/ansht2000/thisorthat/internal/database"
-	"github.com/ansht2000/thisorthat/internal/elo"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
@@ -71,26 +70,23 @@ func (cfg *apiConfig) handlerUpdateWinnerAndLoserELOs(c *gin.Context) {
 	}
 
 	winnerID := updateWinnerAndLoserParams.WinnerID
-	winnerELO, err := cfg.db.GetELOByCharacterID(c, winnerID)
-	if err != nil {
-		c.IndentedJSON(http.StatusBadRequest, returnErrJSON("invalid id for character"))
-		return
-	}
 	loserID := updateWinnerAndLoserParams.LoserID
-	loserELO, err := cfg.db.GetELOByCharacterID(c, loserID)
-	if err != nil {
-		c.IndentedJSON(http.StatusBadRequest, returnErrJSON("invalid id for character"))
+	if winnerID == uuid.Nil || loserID == uuid.Nil {
+		c.IndentedJSON(http.StatusBadRequest, returnErrJSON("winner_id and loser_id are required"))
 		return
 	}
 
-	newWinnerELO, newLoserELO := elo.CalculateELO(winnerELO, loserELO)
-	if err = cfg.db.UpdateCharactersELOByID(c, winnerID, newWinnerELO); err != nil {
-		c.IndentedJSON(http.StatusInternalServerError, returnErrJSON(err.Error()))
+	match, err := cfg.db.RecordMatch(c, winnerID, loserID)
+	if err != nil {
+		switch {
+		case errors.Is(err, database.ErrSameCharacter), errors.Is(err, database.ErrDifferentLists):
+			c.IndentedJSON(http.StatusBadRequest, returnErrJSON(err.Error()))
+		case errors.Is(err, sql.ErrNoRows):
+			c.IndentedJSON(http.StatusNotFound, returnErrJSON("specified character not found"))
+		default:
+			c.IndentedJSON(http.StatusInternalServerError, returnErrJSON(err.Error()))
+		}
 		return
 	}
-	if err = cfg.db.UpdateCharactersELOByID(c, loserID, newLoserELO); err != nil {
-		c.IndentedJSON(http.StatusInternalServerError, returnErrJSON(err.Error()))
-		return
-	}
-	c.IndentedJSON(http.StatusOK, returnMessageJSON("ELOs successfully updated"))
+	c.IndentedJSON(http.StatusOK, match)
 }

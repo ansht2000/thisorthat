@@ -210,40 +210,6 @@ func TestCharacters(t *testing.T) {
 	}
 }
 
-func TestUpdateCharactersELOByID(t *testing.T) {
-	c := newTestClient(t)
-	ctx := testContext(t)
-	list := mustCreateList(t, c, "invincible")
-	mark := mustCreateCharacter(t, c, list.ID, "Mark Grayson")
-
-	// CURRENT_TIMESTAMP only has second precision, so backdate instead of sleeping
-	if _, err := c.q.ExecContext(ctx, `UPDATE characters SET updated_at = '2000-01-01 00:00:00' WHERE id = ?;`, mark.ID); err != nil {
-		t.Fatal(err)
-	}
-
-	if err := c.UpdateCharactersELOByID(ctx, mark.ID, 1234); err != nil {
-		t.Fatal(err)
-	}
-	elo, err := c.GetELOByCharacterID(ctx, mark.ID)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if elo != 1234 {
-		t.Errorf("expected elo 1234, got %d", elo)
-	}
-	updated, err := c.GetCharacterByID(ctx, mark.ID)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !updated.UpdatedAt.After(time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC)) {
-		t.Errorf("expected updated_at to be bumped, got %v", updated.UpdatedAt)
-	}
-
-	if err := c.UpdateCharactersELOByID(ctx, uuid.New(), 1234); !errors.Is(err, sql.ErrNoRows) {
-		t.Errorf("expected sql.ErrNoRows for unknown id, got %v", err)
-	}
-}
-
 func TestGetListsSortedByName(t *testing.T) {
 	c := newTestClient(t)
 	for _, name := range []string{"the boys", "avatar", "invincible"} {

@@ -2,7 +2,6 @@ package database
 
 import (
 	"context"
-	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
@@ -66,35 +65,4 @@ func (c *Client) GetCharactersByListID(ctx context.Context, listID uuid.UUID) ([
 		WHERE list_id = ?
 		ORDER BY name;
 	`, listID)
-}
-
-func (c *Client) GetELOByCharacterID(ctx context.Context, id uuid.UUID) (int, error) {
-	var elo int
-	if err := c.q.QueryRowContext(ctx, `
-		SELECT elo FROM characters
-		WHERE id = ?;
-	`, id).Scan(&elo); err != nil {
-		return -1, err
-	}
-	return elo, nil
-}
-
-// returns sql.ErrNoRows if no character has that id
-func (c *Client) UpdateCharactersELOByID(ctx context.Context, id uuid.UUID, newELO int) error {
-	result, err := c.q.ExecContext(ctx, `
-		UPDATE characters
-		SET elo = ?, updated_at = CURRENT_TIMESTAMP
-		WHERE id = ?;
-	`, newELO, id)
-	if err != nil {
-		return err
-	}
-	updated, err := result.RowsAffected()
-	if err != nil {
-		return err
-	}
-	if updated == 0 {
-		return sql.ErrNoRows
-	}
-	return nil
 }

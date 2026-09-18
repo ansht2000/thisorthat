@@ -59,5 +59,7 @@ func main() {
 	// TODO: add authentication so only the frontend can call this
 	router.POST("/characters/elo", apiCfg.handlerUpdateWinnerAndLoserELOs)
 
-	router.Run(":" + port)
+	if err := router.Run(":" + port); err != nil {
+		log.Fatalf("server stopped: %v", err)
+	}
 }
