@@ -114,6 +114,17 @@ func (c *Client) RecordMatch(ctx context.Context, winnerID uuid.UUID, loserID uu
 	return match, nil
 }
 
+// newest first. created_at only has second precision,
+// so rowid (insert order) breaks ties within the same second
+func (c *Client) GetMatchesByListID(ctx context.Context, listID uuid.UUID, limit int) ([]Match, error) {
+	return queryAll(ctx, c.q, scanMatch, `
+		SELECT `+matchColumns+` FROM matches
+		WHERE list_id = ?
+		ORDER BY created_at DESC, rowid DESC
+		LIMIT ?;
+	`, listID, limit)
+}
+
 // returns sql.ErrNoRows if no character has that id
 func (c *Client) setRating(ctx context.Context, id uuid.UUID, rating elo.Rating) error {
 	result, err := c.q.ExecContext(ctx, `

@@ -3,15 +3,25 @@ package main
 import (
 	"log"
 	"os"
+	"strings"
 
 	"github.com/ansht2000/thisorthat/internal/database"
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
 
+const (
+	// a person reading two names and clicking one won't sustain more than about
+	// one vote a second, and the burst leaves room for a few quick clicks in a row
+	votesPerSecond = 1
+	voteBurst      = 10
+)
+
 type apiConfig struct {
-	db database.Client
+	db          database.Client
+	platform    string
+	voteLimiter *ipRateLimiter
+	// proxies allowed to report the client's real ip through X-Forwarded-For
+	trustedProxies []string
 }
 
 func main() {
@@ -21,13 +31,23 @@ func main() {
 	if dbURL == "" {
 		log.Fatalln("DB_URL must be set")
 	}
+	platform := os.Getenv("PLATFORM")
+	if platform == "" {
+		log.Fatalln("please set PLATFORM env variable")
+	}
 	dbQueries, err := database.NewClient(dbURL)
 	if err != nil {
 		log.Fatalf("failed to connect to db: %v", err)
 	}
 
 	apiCfg := apiConfig{
-		db: dbQueries,
+		db:          dbQueries,
+		platform:    platform,
+		voteLimiter: newIPRateLimiter(votesPerSecond, voteBurst),
+	}
+	// comma separated ips or cidrs, only needed when running behind a reverse proxy or load balancer
+	if proxies := os.Getenv("TRUSTED_PROXIES"); proxies != "" {
+		apiCfg.trustedProxies = strings.Split(proxies, ",")
 	}
 
 	port := os.Getenv("PORT")
@@ -35,29 +55,10 @@ func main() {
 		// if not specified default port is 8080
 		port = "8080"
 	}
-	// using default router with logging and recovery middleware attached
-	router := gin.Default()
-	router.Use(cors.Default())
-
-	// currently making a group for the post endpoints so they cant be used in prod
-	// will probably change later when a strategy to properly accept user created
-	// lists and characters is implemented
-	// TODO: figure out how to properly get well formatted lists from users
-	devOnly := router.Group("/")
-	devOnly.Use(devModeMiddleware())
-	{
-		devOnly.POST("/lists", apiCfg.handlerCreateList)
-		devOnly.POST("/reset", apiCfg.handlerReset)
-		devOnly.POST("/characters", apiCfg.handlerCreateCharacter)
+	router, err := newRouter(&apiCfg)
+	if err != nil {
+		log.Fatalf("failed to set up router: %v", err)
 	}
-
-	router.GET("/healthz", apiCfg.handlerReadiness)
-	router.GET("/lists", apiCfg.handlerGetLists)
-	router.GET("/lists/:id/characters", apiCfg.handlerGetCharactersByListID)
-	router.GET("/characters/:id", apiCfg.handlerGetCharacterByID)
-
-	// TODO: add authentication so only the frontend can call this
-	router.POST("/characters/elo", apiCfg.handlerUpdateWinnerAndLoserELOs)
 
 	if err := router.Run(":" + port); err != nil {
 		log.Fatalf("server stopped: %v", err)

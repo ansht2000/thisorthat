@@ -10,7 +10,7 @@ type messageResponse struct {
 	Message string `json:"message"`
 }
 
-type updateWinnerAndLoserParams struct {
+type createMatchParams struct {
 	WinnerID uuid.UUID `json:"winner_id"`
-	LoserID uuid.UUID `json:"loser_id"` 
+	LoserID  uuid.UUID `json:"loser_id"`
 }

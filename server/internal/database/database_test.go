@@ -149,8 +149,75 @@ func TestMigrateDatabaseFromBeforeVersioning(t *testing.T) {
 func TestCreateCharacterRequiresExistingList(t *testing.T) {
 	c := newTestClient(t)
 	_, err := c.CreateCharacter(testContext(t), CreateCharacterParams{Name: "Nobody", ListID: uuid.New()})
-	if err == nil {
-		t.Fatal("expected a foreign key error for a list that doesn't exist")
+	if !errors.Is(err, ErrListNotFound) {
+		t.Fatalf("expected ErrListNotFound for a list that doesn't exist, got %v", err)
+	}
+}
+
+func TestGetListByID(t *testing.T) {
+	c := newTestClient(t)
+	ctx := testContext(t)
+	list := mustCreateList(t, c, "invincible")
+
+	got, err := c.GetListByID(ctx, list.ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got != list {
+		t.Errorf("expected %+v, got %+v", list, got)
+	}
+	if _, err := c.GetListByID(ctx, uuid.New()); !errors.Is(err, sql.ErrNoRows) {
+		t.Errorf("expected sql.ErrNoRows for unknown id, got %v", err)
+	}
+}
+
+func TestGetLeaderboard(t *testing.T) {
+	c := newTestClient(t)
+	ctx := testContext(t)
+	list := mustCreateList(t, c, "invincible")
+	other := mustCreateList(t, c, "the boys")
+	mark := mustCreateCharacter(t, c, list.ID, "Mark Grayson")
+	nolan := mustCreateCharacter(t, c, list.ID, "Nolan Grayson")
+	eve := mustCreateCharacter(t, c, list.ID, "Atom Eve")
+	rex := mustCreateCharacter(t, c, list.ID, "Rex Splode")
+	mustCreateCharacter(t, c, other.ID, "Homelander")
+
+	// mark goes up to 1232, nolan down to 1168, eve and rex stay tied at 1200
+	if _, err := c.RecordMatch(ctx, mark.ID, nolan.ID); err != nil {
+		t.Fatal(err)
+	}
+
+	leaderboard, err := c.GetLeaderboard(ctx, list.ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected := []struct {
+		id   uuid.UUID
+		rank int
+		elo  int
+	}{
+		{mark.ID, 1, 1232},
+		{eve.ID, 2, 1200},
+		{rex.ID, 2, 1200},
+		{nolan.ID, 4, 1168},
+	}
+	if len(leaderboard) != len(expected) {
+		t.Fatalf("expected %d entries, got %+v", len(expected), leaderboard)
+	}
+	for i, want := range expected {
+		got := leaderboard[i]
+		if got.ID != want.id || got.Rank != want.rank || got.Elo != want.elo {
+			t.Errorf("position %d: expected %s at rank %d with elo %d, got %s at rank %d with elo %d",
+				i, want.id, want.rank, want.elo, got.Name, got.Rank, got.Elo)
+		}
+	}
+
+	empty, err := c.GetLeaderboard(ctx, uuid.New())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if empty == nil || len(empty) != 0 {
+		t.Errorf("expected an empty non nil slice for an unknown list, got %#v", empty)
 	}
 }
 

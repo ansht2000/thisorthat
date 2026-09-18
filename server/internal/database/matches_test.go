@@ -169,3 +169,43 @@ func TestRecordMatchConcurrentVotesAreNotLost(t *testing.T) {
 		t.Errorf("expected %d matches recorded, got %d", votes, n)
 	}
 }
+
+func TestGetMatchesByListID(t *testing.T) {
+	c := newTestClient(t)
+	ctx := testContext(t)
+	list := mustCreateList(t, c, "invincible")
+	other := mustCreateList(t, c, "the boys")
+	mark := mustCreateCharacter(t, c, list.ID, "Mark Grayson")
+	nolan := mustCreateCharacter(t, c, list.ID, "Nolan Grayson")
+	homelander := mustCreateCharacter(t, c, other.ID, "Homelander")
+	butcher := mustCreateCharacter(t, c, other.ID, "Billy Butcher")
+
+	// all within the same second, so this also checks insert order breaks created_at ties
+	var recorded []Match
+	for _, pair := range [][2]uuid.UUID{{mark.ID, nolan.ID}, {nolan.ID, mark.ID}, {mark.ID, nolan.ID}} {
+		match, err := c.RecordMatch(ctx, pair[0], pair[1])
+		if err != nil {
+			t.Fatal(err)
+		}
+		recorded = append(recorded, match)
+	}
+	if _, err := c.RecordMatch(ctx, homelander.ID, butcher.ID); err != nil {
+		t.Fatal(err)
+	}
+
+	all, err := c.GetMatchesByListID(ctx, list.ID, 10)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(all) != 3 || all[0] != recorded[2] || all[1] != recorded[1] || all[2] != recorded[0] {
+		t.Errorf("expected this list's 3 matches newest first, got %+v", all)
+	}
+
+	limited, err := c.GetMatchesByListID(ctx, list.ID, 2)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(limited) != 2 || limited[0] != recorded[2] || limited[1] != recorded[1] {
+		t.Errorf("expected the 2 newest matches, got %+v", limited)
+	}
+}

@@ -3,10 +3,11 @@ package database
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
-	_ "github.com/mattn/go-sqlite3"
+	"github.com/mattn/go-sqlite3"
 )
 
 // applied to every connection in the pool:
@@ -99,6 +100,12 @@ func queryAll[T any](ctx context.Context, q querier, scan func(rowScanner) (T, e
 		items = append(items, item)
 	}
 	return items, rows.Err()
+}
+
+// true when a write was rejected for pointing at a row that doesn't exist
+func isForeignKeyError(err error) bool {
+	var sqliteErr sqlite3.Error
+	return errors.As(err, &sqliteErr) && sqliteErr.ExtendedCode == sqlite3.ErrConstraintForeignKey
 }
 
 func withDSNParams(pathToDB string) string {

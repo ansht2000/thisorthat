@@ -49,6 +49,13 @@ func (c *Client) GetLists(ctx context.Context) ([]List, error) {
 	`)
 }
 
+func (c *Client) GetListByID(ctx context.Context, id uuid.UUID) (List, error) {
+	return scanList(c.q.QueryRowContext(ctx, `
+		SELECT `+listColumns+` FROM lists
+		WHERE id = ?;
+	`, id))
+}
+
 // characters and matches go with their lists through ON DELETE CASCADE
 func (c *Client) DeleteLists(ctx context.Context) error {
 	_, err := c.q.ExecContext(ctx, `DELETE FROM lists;`)
