@@ -12,6 +12,9 @@ func (cfg *apiConfig) handlerReset(c *gin.Context) {
 		c.IndentedJSON(http.StatusForbidden, returnErrJSON("unauthorized action"))
 		return
 	}
-	cfg.db.DeleteLists()
+	if err := cfg.db.DeleteLists(c); err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, returnErrJSON(err.Error()))
+		return
+	}
 	c.IndentedJSON(http.StatusOK, returnMessageJSON("successfully reset db"))
 }

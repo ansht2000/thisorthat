@@ -53,7 +53,6 @@ func main() {
 
 	router.GET("/healthz", apiCfg.handlerReadiness)
 	router.GET("/lists", apiCfg.handlerGetLists)
-	router.GET("/lists/random")
 	router.GET("/lists/:id/characters", apiCfg.handlerGetCharactersByListID)
 	router.GET("/characters/:id", apiCfg.handlerGetCharacterByID)
 

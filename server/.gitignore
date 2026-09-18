@@ -3,3 +3,5 @@ assets/
 scripts/
 thisorthat.db
 todos.txt
+*.db-wal
+*.db-shm
