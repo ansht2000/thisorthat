@@ -1,83 +1,19 @@
-import { useState } from "react";
-import type { Character } from "../../types/character";
-
-import "./character_ranker.css"
-import Navbar from "../../components/navbar";
-import FranchiseSelector from "./components/franchise_selector";
-import CharacterCard from "./components/character_card";
-import VSBadge from "./components/vs_badge";
-import { useQueryFranchises } from "../../hooks/use-query-franchises";
+import FranchiseScope from "../../components/franchise_scope";
+import PageHeader from "../../components/page_header";
+import Arena from "./components/arena";
+import "./character_ranker.css";
 
 function CharacterRanker() {
-    const franchises = useQueryFranchises();
-
-    const [franchise, setFranchise] = useState<string>("invincible");
-    const [pair, setPair] = useState<number[]>([0, 1]);
-    const [flash, setFlash] = useState<string | null>(null);
-
-    const activeFranchise = franchise ?? Object.keys(franchises)[0];
-    const chars = franchises[activeFranchise]?.characters ?? [];
-    const left = chars[pair[0]];
-    const right = chars[pair[1]];
-
-    function handlePick(picked: Character) {
-        if (chars.length < 2) return;
-        const side = picked.id === left.id ? "left" : "right";
-        setFlash(side);
-
-        // TODO: update pick with backend
-
-        setTimeout(() => {
-            setFlash(null);
-            let a: number;
-            let b: number;
-            do {
-                a = Math.floor(Math.random() * chars.length);
-                b = Math.floor(Math.random() * chars.length);
-            } while (a === b);
-            setPair([a, b]);
-        // set a reasonable timeout, 500ms is good
-        }, 500)
-    }
-
-    function handleFranchiseChange(franchise: string) {
-        setFranchise(franchise);
-        setPair([0, 1]);
-        setFlash(null);
-    }
-
     return (
-        <div className="page">
-            <Navbar active="/"/>
-            <main className="main">
-                <div className="header">
-                    <h1 className="title">
-                        Who wins?
-                    </h1>
-                    <p className="subtitle">
-                       You choose! 
-                    </p>
-                </div>
-                <FranchiseSelector selected={franchise} onChange={handleFranchiseChange}/>
-                <div className="arena">
-                    {flash && (
-                        <div
-                            className={`
-                                flashOverlay ${flash === "left" ? "flashOverlayLeftGrad" : "flashOverlayRightGrad"}
-                            `}
-                        />
-                    )}
-                    {left && right && (
-                        <>
-                            <CharacterCard character={left} side="left" onPick={handlePick} />
-                            <VSBadge />
-                            <CharacterCard character={right} side="right" onPick={handlePick} />
-                        </>
-                    )}
-                </div>
-                <p className="hint">Click on a character to choose them as the winner</p>
-            </main>
-        </div>
+        <>
+            <PageHeader title="Who wins?" subtitle="You choose!" />
+            {/* keyed so a new franchise starts from a clean slate instead of finishing the old one's vote */}
+            <FranchiseScope>{(franchise) => <Arena key={franchise.id} franchiseId={franchise.id} />}</FranchiseScope>
+            <p className="hint">
+                Tap or click the character you think wins
+                <span className="hintKeys"> · or press ← / →</span>
+            </p>
+        </>
     );
 }
 

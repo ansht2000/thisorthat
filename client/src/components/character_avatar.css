@@ -1,0 +1,38 @@
+.avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+    user-select: none;
+}
+
+.avatarFill {
+    width: 100%;
+    height: 100%;
+    /* scales with the card it sits in */
+    font-size: clamp(36px, 10vw, 72px);
+}
+
+.avatarRound {
+    border-radius: 50%;
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+}
+
+.avatarImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatarInitials {
+    font-family: var(--font-display);
+    font-weight: 900;
+    letter-spacing: 0.05em;
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.avatarRound .avatarInitials {
+    color: var(--text-muted);
+}

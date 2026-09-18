@@ -1,12 +1,5 @@
-import type { Character } from "./character.ts";
-
+// a list on the api side
 export type FranchiseType = {
     id: string;
     name: string;
-    characters: Character[];
-}
-
-export type FranchisesType = {
-    [key: string]: FranchiseType;
-}
-
+};

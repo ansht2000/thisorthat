@@ -1,0 +1,26 @@
+.header {
+    text-align: center;
+    margin-bottom: clamp(16px, 4vw, 24px);
+}
+
+.title {
+    font-family: var(--font-display);
+    font-size: clamp(36px, 8vw, 56px);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin: 0;
+    background: linear-gradient(90deg, var(--red), #fff 50%, var(--blue));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+    font-size: clamp(13px, 3vw, 15px);
+    color: var(--text-muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin: 8px 0 0;
+}

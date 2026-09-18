@@ -1,17 +1,7 @@
-import { useStore } from "@nanostores/react"
-import { $franchises, setFranchises } from "../lib/store"
-import { useEffect } from "react"
-import { fetchFranchises } from "../data/api"
-import type { FranchisesType } from "../types/franchise"
+import { fetchFranchises } from "../data/api";
+import type { FranchiseType } from "../types/franchise";
+import { useQuery, type QueryResult } from "./use-query";
 
-export function useQueryFranchises(): FranchisesType {
-    const franchises = useStore($franchises);
-
-    useEffect(() => {
-        fetchFranchises()
-            .then(setFranchises)
-            .catch((error) => console.log(error))
-    }, []);
-
-    return franchises;
+export function useQueryFranchises(): QueryResult<FranchiseType[]> {
+    return useQuery("franchises", fetchFranchises);
 }

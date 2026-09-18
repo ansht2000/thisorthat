@@ -1,15 +1,9 @@
 import { atom } from "nanostores";
-import { type FranchiseType } from "../types/franchise";
-import { type FranchisesType } from "../types/franchise";
 
-export const $franchise = atom<FranchiseType>({} as FranchiseType);
-export const $franchises = atom<FranchisesType>({});
+// shared by every page so switching pages keeps the same franchise.
+// null until someone picks one, which shows the first franchise
+export const $selectedFranchiseId = atom<string | null>(null);
 
-export function setFranchise(franchise: FranchiseType) {
-    $franchise.set(franchise);
+export function setSelectedFranchiseId(id: string) {
+    $selectedFranchiseId.set(id);
 }
-
-export function setFranchises(franchises: FranchisesType) {
-    $franchises.set(franchises);
-}
-

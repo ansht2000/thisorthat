@@ -1,0 +1,14 @@
+.eloDelta {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.eloDeltaGain {
+    color: var(--gain);
+}
+
+.eloDeltaLoss {
+    color: var(--loss);
+}

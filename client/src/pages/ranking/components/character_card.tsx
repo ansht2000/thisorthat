@@ -1,56 +1,49 @@
+import CharacterAvatar from "../../../components/character_avatar";
+import EloDelta from "../../../components/elo_delta";
 import type { Character } from "../../../types/character";
-import { getInitials } from "../../../lib/utils";
+import "./character_card.css";
 
-import "./character_card.css"
+export type Side = "left" | "right";
 
-function CharacterCard({ character, side, onPick }: { character: Character, side: string, onPick: (character: Character) => void }) {
+type Props = {
+    character: Character;
+    side: Side;
+    onPick: () => void;
+    disabled?: boolean;
+    // set while a vote's result is on screen
+    outcome?: { won: boolean; delta: number };
+};
+
+function CharacterCard({ character, side, onPick, disabled = false, outcome }: Props) {
     const isLeft = side === "left";
+    const outcomeClass = outcome ? (outcome.won ? "cardWon" : "cardLost") : "";
+
     return (
         <button
-            onClick={() => onPick(character)}
-            className={`card ${isLeft ? "cardLeft": "cardRight"}`}
-            onMouseEnter={(e) => {
-                e.currentTarget.style.transform="scale(1.03)";
-                e.currentTarget.style.boxShadow=`
-                    0 0 40px ${isLeft
-                        ? "rgba(255,60,60,0.5)"
-                        : "rgba(60,130,255,0.5)"
-                    }
-                `
-            }}
-            onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "scale(1)";
-                e.currentTarget.style.boxShadow=`
-                    0 0 20px ${isLeft
-                        ? "rgba(255,60,60,0.25)"
-                        : "rgba(60,130,255,0.25)"
-                    }
-                `
-            }}
+            type="button"
+            onClick={onPick}
+            disabled={disabled}
+            className={`card ${isLeft ? "cardLeft" : "cardRight"} ${outcomeClass}`}
+            aria-label={`Choose ${character.name}`}
+            aria-keyshortcuts={isLeft ? "ArrowLeft" : "ArrowRight"}
         >
-            <div
-                className={`
-                    cardImageWrap ${isLeft ? "cardImageWrapLeftGrad" : "cardImageWrapRightGrad"}
-                `}
-            >
-                {character.picture_url ? (
-                    <img src={character.picture_url} alt={character.name} className="cardImage"/>
-                ) : (
-                    <span className="cardInitials">{getInitials(character.name)}</span>
-                )}
+            <div className={`cardImageWrap ${isLeft ? "cardImageWrapLeftGrad" : "cardImageWrapRightGrad"}`}>
+                <CharacterAvatar name={character.name} pictureUrl={character.picture_url} />
+                {outcome && <EloDelta value={outcome.delta} className="cardDelta" />}
             </div>
             <div className="cardInfo">
                 <span className="cardName">{character.name}</span>
             </div>
-            <div
-                className={`
-                    cardPickLabel ${isLeft ? "cardPickLabelLeftGrad" : "cardPickLabelRightGrad"}
-                `}
-            >
-                CHOOSE
+            <div className={`cardPickLabel ${isLeft ? "cardPickLabelLeftGrad" : "cardPickLabelRightGrad"}`}>
+                {outcome ? (outcome.won ? "Winner" : " ") : "Choose"}
+                {!outcome && (
+                    <kbd className="cardShortcut" aria-hidden="true">
+                        {isLeft ? "←" : "→"}
+                    </kbd>
+                )}
             </div>
         </button>
-    )
+    );
 }
 
 export default CharacterCard;

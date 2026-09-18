@@ -1,18 +1,21 @@
 .vsBadge {
-    border-radius: 100%;
-    background: radial-gradient(circle, #1a1a2e 0%, #0a0a0f 40%);
-    border: 2px solid rgba(255,255,255,0.12);
+    width: clamp(40px, 10vw, 72px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle, #1a1a2e 0%, var(--bg) 70%);
+    border: 2px solid rgba(255, 255, 255, 0.12);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
     z-index: 10;
-    box-shadow: 0 0 30px rgba(0,0,0,0.8);
-    padding: 30px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
 }
 
 .vsText {
-    font-weight: 600;
-    letterSpacing: 2;
-    color: rgba(255,255,255,0.7);
+    font-family: var(--font-display);
+    font-size: clamp(14px, 3.5vw, 22px);
+    font-weight: 900;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, 0.75);
 }

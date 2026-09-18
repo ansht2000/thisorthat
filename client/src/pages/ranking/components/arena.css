@@ -1,0 +1,44 @@
+/* side by side at every width: stacked, phones would push the second card below the fold */
+.arena {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(6px, 4vw, 48px);
+    width: 100%;
+}
+
+.flashOverlay {
+    position: absolute;
+    inset: -24px;
+    pointer-events: none;
+    /* behind the cards, so it glows around the pick instead of tinting it */
+    z-index: 0;
+    animation: flashFade 0.5s ease-out forwards;
+}
+
+.flashOverlayLeft {
+    /* sized to fade out right at the overlay's edges, so it never shows a hard border */
+    background: radial-gradient(ellipse 27% 50% at 27% 50%, var(--red-glow-strong), transparent);
+}
+
+.flashOverlayRight {
+    background: radial-gradient(ellipse 27% 50% at 73% 50%, var(--blue-glow-strong), transparent);
+}
+
+@keyframes flashFade {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+.arenaNotice {
+    min-height: 1.5em;
+    margin: 16px 0 0;
+    font-size: 14px;
+    color: var(--loss);
+    text-align: center;
+}

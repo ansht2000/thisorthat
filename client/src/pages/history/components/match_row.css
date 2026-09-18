@@ -1,0 +1,81 @@
+.matchRow {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+
+.matchContender {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.matchContender:first-child {
+    justify-content: flex-end;
+}
+
+.matchName {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+}
+
+.matchDelta {
+    font-size: 16px;
+}
+
+.matchVerb {
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-faint);
+}
+
+.matchTime {
+    font-size: 13px;
+    color: var(--text-faint);
+    white-space: nowrap;
+}
+
+/* phones: winner and loser stacked, "beat" and the time on the right */
+@media (max-width: 559px) {
+    .matchRow {
+        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-areas:
+            "winner verb"
+            "loser time";
+        gap: 8px 12px;
+        padding: 10px 12px;
+    }
+
+    .matchContender:first-child {
+        grid-area: winner;
+        justify-content: flex-start;
+    }
+
+    .matchContender:nth-child(3) {
+        grid-area: loser;
+    }
+
+    .matchVerb {
+        grid-area: verb;
+        justify-self: end;
+    }
+
+    .matchTime {
+        grid-area: time;
+        justify-self: end;
+    }
+
+    .matchName {
+        font-size: 17px;
+    }
+}

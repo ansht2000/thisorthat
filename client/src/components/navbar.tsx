@@ -1,33 +1,38 @@
-import './navbar.css'
+import { NavLink } from "react-router";
+import "./navbar.css";
 
-function Navbar({ active }: { active: string }) {
-    const NAV_LINKS = [
-        { label: "Rank", path: "/" },
-        { label: "Leaderboard", path: "/leaderboard" },
-        { label: "History", path: "/history" },
-        { label: "About", path: "/about" },
-    ];
+const NAV_LINKS = [
+    { label: "Rank", path: "/" },
+    { label: "Leaderboard", path: "/leaderboard" },
+    { label: "History", path: "/history" },
+    { label: "About", path: "/about" },
+];
 
+function Navbar() {
     return (
-        <nav className="nav">
+        <nav className="nav" aria-label="Main">
             <div className="navInner">
-                <a href="/" className="logo">
-                    <span className="logoText">thisorthat</span>
-                </a>
+                <NavLink to="/" className="logo" aria-label="thisorthat home">
+                    <span className="logoThis">this</span>
+                    <span className="logoOr">or</span>
+                    <span className="logoThat">that</span>
+                </NavLink>
                 <div className="navLinks">
                     {NAV_LINKS.map((link) => (
-                        <a
+                        <NavLink
                             key={link.path}
-                            href={link.path}
-                            className={`navlink ${active === link.path ? "navLinkActive" : ""}`}
+                            to={link.path}
+                            // without end, "/" would count as active on every page
+                            end={link.path === "/"}
+                            className={({ isActive }) => `navLink ${isActive ? "navLinkActive" : ""}`}
                         >
                             {link.label}
-                        </a>
+                        </NavLink>
                     ))}
                 </div>
             </div>
         </nav>
-    )
+    );
 }
 
-export default Navbar
+export default Navbar;

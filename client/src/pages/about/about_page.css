@@ -1,0 +1,54 @@
+.about {
+    width: 100%;
+    max-width: 65ch;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    line-height: 1.65;
+}
+
+.about h2 {
+    margin: 16px 0 4px;
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.about p,
+.about ul {
+    margin: 0;
+    color: var(--text-muted);
+}
+
+.about ul {
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.about strong {
+    color: var(--text);
+}
+
+.about a {
+    color: var(--text);
+    text-decoration: underline;
+}
+
+.about .aboutCta {
+    align-self: center;
+    margin-top: 24px;
+    padding: 10px 28px;
+    font-family: var(--font-display);
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: #fff;
+    background: linear-gradient(90deg, var(--red), var(--blue));
+    border-radius: 8px;
+}
