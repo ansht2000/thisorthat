@@ -1,0 +1,78 @@
+[
+    {
+        "name": "avatar",
+        "characters": [
+            { "name": "Aang" },
+            { "name": "Fire Lord Ozai" },
+            { "name": "Iroh" },
+            { "name": "Azula" },
+            { "name": "Toph" },
+            { "name": "Zuko" },
+            { "name": "Katara" },
+            { "name": "Ty Lee" },
+            { "name": "Suki" },
+            { "name": "Sokka" }
+        ]
+    },
+    {
+        "name": "fallout",
+        "characters": [
+            { "name": "The Ghoul" },
+            { "name": "Maximus" },
+            { "name": "Lee Moldaver" },
+            { "name": "Lucy MacLean" },
+            { "name": "Hank MacLean" },
+            { "name": "Thaddeus" },
+            { "name": "Dogmeat" },
+            { "name": "Norm MacLean" }
+        ]
+    },
+    {
+        "name": "invincible",
+        "characters": [
+            { "name": "Thragg" },
+            { "name": "Conquest" },
+            { "name": "Omni Man" },
+            { "name": "Battle Beast" },
+            { "name": "Invincible" },
+            { "name": "Allen the Alien" },
+            { "name": "Angstrom Levy" },
+            { "name": "Atom Eve" },
+            { "name": "Rex Splode" },
+            { "name": "Cecil Stedman" }
+        ]
+    },
+    {
+        "name": "jujutsu kaisen",
+        "characters": [
+            { "name": "Ryomen Sukuna" },
+            { "name": "Satoru Gojo" },
+            { "name": "Yuta Okkotsu" },
+            { "name": "Suguru Geto" },
+            { "name": "Mahito" },
+            { "name": "Yuji Itadori" },
+            { "name": "Aoi Todo" },
+            { "name": "Maki Zenin" },
+            { "name": "Kento Nanami" },
+            { "name": "Megumi Fushiguro" },
+            { "name": "Nobara Kugisaki" }
+        ]
+    },
+    {
+        "name": "the boys",
+        "characters": [
+            { "name": "Homelander" },
+            { "name": "Soldier Boy" },
+            { "name": "Black Noir" },
+            { "name": "Queen Maeve" },
+            { "name": "Starlight" },
+            { "name": "A-Train" },
+            { "name": "Kimiko" },
+            { "name": "Billy Butcher" },
+            { "name": "The Deep" },
+            { "name": "Frenchie" },
+            { "name": "Mother's Milk" },
+            { "name": "Hughie Campbell" }
+        ]
+    }
+]
